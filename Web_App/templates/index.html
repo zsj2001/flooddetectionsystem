@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flood Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Flood Detection System</h1>
+        <p>Please upload only picture file</p>
+        <p>Accepted file types: ".png", ".jpg", ".jpeg", ".gif"</p>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="upload-area" id="upload-area">
+                <span>Drag and drop file here to add them.</span>
+                <input type="file" name="file" id="file-upload" accept="image/*" required>
+            </div>
+            <!-- Placeholder for displaying the file name -->
+            <div id="file-name" class="file-name"></div>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        
+        {% if image_data %}
+        <div class="uploaded-image">
+            <h2>Uploaded picture</h2>
+            <img src="data:image/jpeg;base64,{{ image_data }}" alt="Uploaded Image">
+        </div>
+        {% endif %}
+        
+        {% if prediction %}
+        <div class="result">
+            <h2>Result</h2>
+            <p>Class: <strong>{{ prediction }}</strong></p>
+            <p>Confidence Score: <strong>{{ confidence|round(4) }}</strong></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Drag and Drop Feature
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        // Trigger file input when clicking on the area
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Display file name when file is selected via file dialog
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = "Selected File: " + fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = "";
+            }
+        });
+
+        // Highlight area on dragover
+        uploadArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        // Remove highlight when leaving drag area
+        uploadArea.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            uploadArea.classList.remove('drag-over');
+        });
+
+        // Handle drop event
+        uploadArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileNameDisplay.textContent = "Selected File: " + files[0].name;
+            }
+        });
+    </script>
+</body>
+</html>
