@@ -1,5 +1,0 @@
-Flask
-Pillow
-torch
-torchvision
-gunicorn
